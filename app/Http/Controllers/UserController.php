@@ -13,9 +13,24 @@ class UserController extends Controller
         return $users;
     }
 
+    public function validateUser(Request $request)
+    {
+        $pw = $request->password;
+        $oldPassword = '$2y$10$xFrPm5KNEC/CEISEZC5Hn.UFs2vKnRfh6k2ntcd5wYFxUeA/LqxTC';
+        var_dump(app()->make('hash')->check($pw, $oldPassword));
+    }
+
     public function store(Request $request)
     {
-        $user = User::create($request->all());
+        $hasher = app()->make('hash');
+
+        $user = User::create(array(
+            "name" => $request->name,
+            "mobile" => $request->mobile,
+            "email" => $request->email,
+            "password" => $hasher->make($request->password),
+        ));
+
         return response()->json($user);
     }
 

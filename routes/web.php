@@ -17,10 +17,35 @@
 
 $router->get('/', 'UserController@index');
 
-$router->group(['prefix' => 'user'], function ($router) {
+// $router->post('auth/login', ['uses' => 'AuthController@authenticate']);
+$router->post('login', 'AuthController@authenticate');
+
+$router->group(['prefix' => 'user', 'middleware' => 'jwt.auth'], function ($router) {
     $router->get('', 'UserController@index');
+    $router->post('validate', 'UserController@validateUser');
     $router->post('add', 'UserController@store');
     $router->get('{id}', 'UserController@edit');
     $router->put('edit/{id}', 'UserController@update');
     $router->delete('delete/{id}', 'UserController@destroy');
 });
+
+// Users
+$router->get('/users/', 'UserController@index');
+$router->post('/users/', 'UserController@store');
+$router->get('/users/{user_id}', 'UserController@show');
+$router->put('/users/{user_id}', 'UserController@update');
+$router->delete('/users/{user_id}', 'UserController@destroy');
+// Posts
+$router->get('/posts', 'PostController@index');
+$router->post('/posts', 'PostController@store');
+$router->get('/posts/{post_id}', 'PostController@show');
+$router->put('/posts/{post_id}', 'PostController@update');
+$router->delete('/posts/{post_id}', 'PostController@destroy');
+// Comments
+$router->get('/comments', 'CommentController@index');
+$router->get('/comments/{comment_id}', 'CommentController@show');
+// Comments of a Post
+$router->get('/posts/{post_id}/comments', 'PostCommentController@index');
+$router->post('/posts/{post_id}/comments', 'PostCommentController@store');
+$router->put('/posts/{post_id}/comments/{comment_id}', 'PostCommentController@update');
+$router->delete('/posts/{post_id}/comments/{comment_id}', 'PostCommentController@destroy');
